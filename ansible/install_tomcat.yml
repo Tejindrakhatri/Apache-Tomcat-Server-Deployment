@@ -1,1 +1,48 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install Java
+      package:
+        name: default-jdk
+        state: present
 
+    - name: Download and Extract Apache Tomcat
+      get_url:
+        url: "http://archive.apache.org/dist/tomcat/tomcat-9/v9.x.x/bin/apache-tomcat-9.x.x.tar.gz"
+        dest: /tmp/apache-tomcat.tar.gz
+
+    - name: Extract Tomcat
+      unarchive:
+        src: /tmp/apache-tomcat.tar.gz
+        dest: /opt
+        remote_src: yes
+
+    - name: Set CATALINA_HOME Environment Variable
+      lineinfile:
+        path: /etc/environment
+        line: 'CATALINA_HOME=/opt/apache-tomcat-9.x.x'
+        state: present
+      notify: Restart Tomcat
+
+    - name: Install Apache HTTP Server
+      package:
+        name: apache2
+        state: present
+
+    - name: Configure Apache HTTP Server
+      template:
+        src: apache2.conf.j2
+        dest: /etc/apache2/apache2.conf
+      notify: Restart Apache
+
+  handlers:
+    - name: Restart Tomcat
+      service:
+        name: tomcat
+        state: restarted
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
