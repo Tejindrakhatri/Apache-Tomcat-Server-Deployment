@@ -23,10 +23,15 @@ jobs:
         cd terraform/
         terraform init
 
+    - name: Terraform Plan
+      run: |
+        cd terraform/
+        terraform plan -out=tfplan
+
     - name: Terraform Apply
       run: |
         cd terraform/
-        terraform apply -auto-approve
+        terraform apply -auto-approve tfplan
 
     - name: Install Python and pip
       run: |
