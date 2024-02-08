@@ -1,14 +1,17 @@
 provider "aws" {
-  region     = "us-east-1"
-  alias      = "east1"
+  region = "us-east-1"
+  alias  = "east1"
 }
 
-data "aws_caller_identity" "current" {}
+resource "tls_private_key" "tomcat_keypair" {
+  algorithm   = "RSA"
+  rsa_bits    = 2048
+}
 
 resource "aws_key_pair" "tomcat_keypair" {
-  provider        = aws.east1
-  key_name        = "tomcat_keypair"
-  public_key      = file("~/.ssh/tomcat_keypair.pub")
+  provider    = aws.east1
+  key_name    = "tomcat_keypair"
+  public_key  = tls_private_key.tomcat_keypair.public_key_openssh
 }
 
 resource "aws_instance" "tomcat_instance" {
