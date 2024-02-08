@@ -1,0 +1,36 @@
+name: Deploy Apache Tomcat
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.1.0
+
+    - name: Terraform Init
+      run: |
+        cd terraform/
+        terraform init
+
+    - name: Terraform Apply
+      run: |
+        cd terraform/
+        terraform apply -auto-approve
+
+    - name: Setup Ansible
+      uses: msignorini/setup-ansible@v2
+
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook -i ansible/inventory/hosts.ini ansible/install_tomcat.yml
