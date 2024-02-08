@@ -1,8 +1,9 @@
 provider "aws" {
   region     = "us-east-1"
   alias      = "east1"
-  account_id = "349778122661"
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "aws_key_pair" "tomcat_keypair" {
   provider        = aws.east1
