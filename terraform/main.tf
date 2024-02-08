@@ -16,7 +16,7 @@ resource "aws_key_pair" "tomcat_keypair" {
 
 resource "aws_instance" "tomcat_instance" {
   provider        = aws.east1
-  ami             = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI ID
+  ami             = "ami-0d145bce97ab71de8"  # Amazon Linux 2 AMI ID
   instance_type   = "t2.small"
   key_name        = aws_key_pair.tomcat_keypair.key_name
 
